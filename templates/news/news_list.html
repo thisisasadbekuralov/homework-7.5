@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	All news
+{% endblock %}
+
+{% block content %}
+	<h1>All news</h1>
+    <br>
+    <select name="category" id="category" onchange="location.replace('?category='+this.value)">
+        <option value="0">All news</option>
+        <option value="1">World</option>
+        <option value="2">Uzbekistan</option>
+        <option value="3">Sport</option>
+        <option value="4">Politics</option>
+    </select>
+    <br>
+    <ul>
+        {% for news in object_list %}
+            <li><a href="{% url 'detail_news' news.pk %}">{{ news.news_title }}</a></li>
+            <sup class="badge bg-info">{{ news.news_category }}</sup>
+        {% endfor %}
+    </ul>
+    <br>
+    <br>
+
+    {% if paginator.num_pages > 1 %}
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                      <li class="page-item"><a class="page-link" href="{% url 'list_news' %}?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% endif %}
+            {% for page in paginator.page_range %}
+                {% if page != page_obj.number %}
+                    <li class="page-item"><a class="page-link" href="{% url 'list_news' %}?page={{ page }}">{{ page }}</a></li>
+                {% else %}
+                    <li class="page-item active"><a class="page-link" disabled="">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                      <li class="page-item"><a class="page-link" href="{% url 'list_news' %}?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+    <script>
+        const myParams = new URLSearchParams(window.location.search);
+        const catID = myParams.get('category');
+        const mySelect = document.getElementById('category');
+        mySelect.value = catID;
+    </script>
+    
+{% endblock %}
