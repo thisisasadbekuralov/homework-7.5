@@ -66,15 +66,16 @@ class NewsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 def index(request):
     if request.method == 'POST':
         try:
-            emails = CustomUser.objects.filter(email=request.user.email)
+            emails = CustomUser.objects.values_list('email', flat=True)
             subject = request.POST.get('subject', '')
             message = request.POST.get('text', '')
+            print(emails)
 
             send_mail(
                 subject=subject,
                 message=message,
                 from_email=EMAIL_HOST_USER,
-                recipient_list=[user.email for user in emails],
+                recipient_list=list(emails),
             )
             return HttpResponse('<h1>Email sent successfully!</h1>')
         except Exception as e:
